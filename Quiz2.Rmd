@@ -1,0 +1,224 @@
+---
+title: 'Week 2: The Caret Package Quiz'
+author: "Claus Bo Hansen"
+date: "November 20, 2018"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(caret)
+library(Hmisc)
+library(ggplot2)
+
+```
+
+## Question 1
+
+Load the Alzheimer's disease data using the commands:
+
+```{r, echo = TRUE}
+library(AppliedPredictiveModeling)
+data(AlzheimerDisease)
+
+```
+
+
+Which of the following commands will create non-overlapping training and test sets with about 50% of the observations assigned to each? 
+
+```{r, echo = TRUE}
+
+# Option 1
+adData = data.frame(diagnosis,predictors)
+trainIndex = createDataPartition(diagnosis, p = 0.50)
+#training = adData[trainIndex,]
+#testing = adData[-trainIndex,]
+# Returns error: Error in `[.default`(xj, i) : invalid subscript type 'list'
+
+# Option 2
+adData = data.frame(diagnosis,predictors)
+train = createDataPartition(diagnosis, p = 0.50,list=FALSE)
+test = createDataPartition(diagnosis, p = 0.50,list=FALSE)
+# Creates overlapping sets
+
+# Option 3
+adData = data.frame(diagnosis,predictors)
+trainIndex = createDataPartition(diagnosis, p = 0.50,list=FALSE)
+training = adData[trainIndex,]
+testing = adData[-trainIndex,]
+# Correctly creates non-overlapping sets
+
+# Option 4
+adData = data.frame(predictors)
+trainIndex = createDataPartition(diagnosis,p=0.5,list=FALSE)
+training = adData[trainIndex,]
+testing = adData[-trainIndex,]
+# Is missing diagnosis
+
+```
+
+
+## Question 2
+
+Load the cement data using the commands:
+
+```{r, echo = TRUE}
+library(AppliedPredictiveModeling)
+data(concrete)
+library(caret)
+set.seed(1000)
+inTrain = createDataPartition(mixtures$CompressiveStrength, p = 3/4)[[1]]
+training = mixtures[ inTrain,]
+testing = mixtures[-inTrain,]
+
+```
+
+
+## Question 2, featurePlot
+
+
+```{r, echo = TRUE}
+
+featurePlot(x=training[,c("Cement", "BlastFurnaceSlag","FlyAsh", "Water", "Superplasticizer", "CoarseAggregate", "FineAggregate", "Age")], y = training$CompressiveStrength, plot = "pairs")
+
+```
+
+## Question 2, qplot w/o cut
+
+
+```{r, echo = TRUE}
+
+qplot(row.names(training), CompressiveStrength, data = training)
+
+```
+
+
+## Question 2, qplot cut2 Cement
+
+```{r, echo = TRUE}
+
+cuts <- cut2(training$Cement, g=5)
+plotdata <- cbind(training, cuts)
+qplot(row.names(plotdata), CompressiveStrength, data = plotdata, colour = cuts)
+
+```
+
+## Question 2, qplot cut2 BlastFurnaceSlag
+
+```{r, echo = TRUE}
+
+cuts <- cut2(training$BlastFurnaceSlag, g=5)
+plotdata <- cbind(training, cuts)
+qplot(row.names(plotdata), CompressiveStrength, data = plotdata, colour = cuts)
+
+```
+
+## Question 2, qplot cut2 FlyAsh
+
+```{r, echo = TRUE}
+
+cuts <- cut2(training$FlyAsh, g=5)
+plotdata <- cbind(training, cuts)
+qplot(row.names(plotdata), CompressiveStrength, data = plotdata, colour = cuts)
+
+```
+
+## Question 2, qplot cut2 Water
+
+```{r, echo = TRUE}
+
+cuts <- cut2(training$Water, g=5)
+plotdata <- cbind(training, cuts)
+qplot(row.names(plotdata), CompressiveStrength, data = plotdata, colour = cuts)
+
+```
+
+## Question 2, qplot cut2 Superplasticizer
+
+```{r, echo = TRUE}
+
+cuts <- cut2(training$Superplasticizer, g=5)
+plotdata <- cbind(training, cuts)
+qplot(row.names(plotdata), CompressiveStrength, data = plotdata, colour = cuts)
+
+```
+
+## Question 2, qplot cut2 CoarseAggregate
+
+```{r, echo = TRUE}
+
+cuts <- cut2(training$CoarseAggregate, g=5)
+plotdata <- cbind(training, cuts)
+qplot(row.names(plotdata), CompressiveStrength, data = plotdata, colour = cuts)
+
+```
+
+## Question 2, qplot cut2 FineAggregate
+
+```{r, echo = TRUE}
+
+cuts <- cut2(training$FineAggregate, g=5)
+plotdata <- cbind(training, cuts)
+qplot(row.names(plotdata), CompressiveStrength, data = plotdata, colour = cuts)
+
+```
+
+## Question 2, qplot cut2 Age
+
+```{r, echo = TRUE}
+
+cuts <- cut2(training$Age, g=5)
+plotdata <- cbind(training, cuts)
+qplot(row.names(plotdata), CompressiveStrength, data = plotdata, colour = cuts)
+
+```
+
+Answer: There is a non-random pattern in the plot of the outcome versus index that does not appear to be perfectly explained by any predictor suggesting a variable may be missing.
+
+
+
+## Question 3
+
+```{r, echo = TRUE}
+
+library(AppliedPredictiveModeling)
+data(concrete)
+library(caret)
+set.seed(1000)
+inTrain = createDataPartition(mixtures$CompressiveStrength, p = 3/4)[[1]]
+training = mixtures[ inTrain,]
+testing = mixtures[-inTrain,]
+
+```
+
+
+## Histogram
+
+```{r, echo = TRUE}
+
+ggplot(data=training, aes(training$Superplasticizer)) +
+  geom_histogram()
+
+```
+
+Answer: There are values of zero so when you take the log() transform those values will be -Inf.
+
+
+Question 4
+
+```{r, echo = TRUE}
+
+library(caret)
+library(AppliedPredictiveModeling)
+set.seed(3433)
+data(AlzheimerDisease)
+adData = data.frame(diagnosis,predictors)
+inTrain = createDataPartition(adData$diagnosis, p = 3/4)[[1]]
+training = adData[ inTrain,]
+testing = adData[-inTrain,]
+
+```
+
+
+
