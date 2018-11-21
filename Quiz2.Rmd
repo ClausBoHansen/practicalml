@@ -16,6 +16,7 @@ library(ggplot2)
 
 ## Question 1
 
+Line added from Windows
 Load the Alzheimer's disease data using the commands:
 
 ```{r, echo = TRUE}
