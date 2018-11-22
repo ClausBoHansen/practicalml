@@ -16,7 +16,6 @@ library(ggplot2)
 
 ## Question 1
 
-Line added from Windows
 Load the Alzheimer's disease data using the commands:
 
 ```{r, echo = TRUE}
@@ -219,7 +218,75 @@ inTrain = createDataPartition(adData$diagnosis, p = 3/4)[[1]]
 training = adData[ inTrain,]
 testing = adData[-inTrain,]
 
+subtrain <- training[,seq(58,69)]
+
+preProcess(subtrain, method = "pca", thresh = 0.9)
+
+```
+
+Find all the predictor variables in the training set that begin with IL.
+Perform principal components on these variables with the preProcess() function from the caret package.
+Calculate the number of principal components needed to capture 90% of the variance. How many are there?
+
+Correct answer: 9 components
+
+
+
+Question 5
+
+```{r, echo = TRUE}
+
+library(caret)
+library(AppliedPredictiveModeling)
+set.seed(3433)
+data(AlzheimerDisease)
+adData = data.frame(diagnosis,predictors)
+inTrain = createDataPartition(adData$diagnosis, p = 3/4)[[1]]
+training = adData[ inTrain,]
+testing = adData[-inTrain,]
+
+subtrain <- training[,c(seq(58,69),1)]
+subtest <- testing[,c(seq(58,69),1)]
+
+# Without PCA : 0.6463
+modelFit <- train(diagnosis~., method = "glm", data = subtrain)
+testPrediction <- predict(modelFit, subtest)
+confusionMatrix(subtest$diagnosis, testPrediction)
+
+
+# With PCA : 0.7195
+trainVars <- training[,seq(58,69)]
+preProc <- preProcess(trainVars, method = "pca", thresh = 0.8)
+trainPCA <- predict(preProc, trainVars)
+trainPCA <- cbind(training[,1], trainPCA)
+colnames(trainPCA)[1] <- "diagnosis"
+
+# Create model
+modelFit <- train(diagnosis~., method = "glm", data = trainPCA)
+
+# Calculate PCA for test set
+testVars <- testing[,seq(58,69)]
+testPCA <- predict(preProc, testVars)
+testPCA <- cbind(testing[,1], testPCA)
+colnames(testPCA)[1] <- "diagnosis"
+
+# Prediction for test set
+testPrediction <- predict(modelFit, testPCA)
+confusionMatrix(subtest$diagnosis, testPrediction)
+
+
+
+
 ```
 
 
+Create a training data set consisting of only the predictors with variable names beginning with IL and the diagnosis.
+Build two predictive models, one using the predictors as they are and one using PCA with principal components explaining 80% of the variance in the predictors.
+Use method="glm" in the train function.
+
+What is the accuracy of each method in the test set? Which is more accurate?
+
+
+Non-PCA Accuracy: 0.65;  
+PCA Accuracy: 0.72 
 
