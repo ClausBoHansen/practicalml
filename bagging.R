@@ -40,4 +40,14 @@ for (i in 1:10){
 # Plot bagged result
 lines(1:155, apply(ll,2,mean), col="red",lwd=2)
 
-# First test with SSH key
+
+# Bagging with caret, treebag
+# Conditional regression tree
+library(caret)
+predictors <- data.frame(ozone=ozone$ozone)
+temparature <- ozone$temperature
+treebag <- bag(predictors, temparature, B = 10,
+               bagControl = bagControl(fit = ctreeBag$fit,
+                                       predict = ctreeBag$pred,
+                                       aggregate = ctreeBag$aggregate))
+
