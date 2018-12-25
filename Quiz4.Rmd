@@ -1,0 +1,87 @@
+---
+title: 'Practical Machine Learning Week 4 Quiz'
+author: "Claus Bo Hansen"
+date: "December 25, 2018"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(caret)
+#library(Hmisc)
+#library(ggplot2)
+#library(rpart)
+#library(rpart.plot)
+#library(rattle)
+#library(pgmm)
+
+```
+
+## Question 1
+
+If you aren't using these versions of the packages, your answers may not exactly match the right answer, but hopefully should be close.
+
+Load the vowel.train and vowel.test data sets:
+
+```{r, echo = TRUE}
+
+
+
+library(ElemStatLearn)
+
+data(vowel.train)
+
+data(vowel.test)
+
+
+# Set the variable y to be a factor variable in both the training and test set.
+vowel.train$y <- as.factor(vowel.train$y)
+vowel.test$y <- as.factor(vowel.test$y)
+
+# Then set the seed to 33833.
+set.seed(33833)
+
+# Fit (1) a random forest predictor relating the factor variable y to the remaining variables and (2) a boosted predictor using the "gbm" method.
+# Fit these both with the train() command in the caret package. 
+model_rf <- train(y ~ ., data = vowel.train, method = "rf")
+model_gbm <- train(y ~ ., data = vowel.train, method = "gbm")
+
+prediction_rf <- predict(model_rf, vowel.test)
+prediction_gbm <- predict(model_gbm, vowel.test)
+
+confusionMatrix(prediction_rf, vowel.test$y)
+confusionMatrix(prediction_gbm, vowel.test$y)
+confusionMatrix(prediction_rf, prediction_gbm)
+
+```
+
+RF: Accuracy : 0.5996
+GBM: Accuracy : 0.5173
+Agreement: 0.6797
+
+Solution:
+RF Accuracy = 0.6082
+
+GBM Accuracy = 0.5152
+
+Agreement Accuracy = 0.6361
+
+## Question 2
+
+Load the Alzheimer's data using the following commands
+
+```{r, echo = TRUE}
+
+# Set the seed to 62433
+
+# and predict diagnosis with all the other variables using a random forest ("rf"), boosted trees ("gbm") and linear discriminant analysis ("lda") model.
+
+# Stack the predictions together using random forests ("rf").
+# What is the resulting accuracy on the test set?
+# Is it better or worse than each of the individual predictions? 
+
+
+```
+
+
